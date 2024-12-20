@@ -5,18 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
-public class CreateTicketDTO {
+public class CreateTicketDto {
     @NotBlank(message = "Title is required")
+    @NotNull(message = "Title is required")
     @Getter @Setter
     private String title;
 
     @NotBlank(message = "Description is required")
+    @NotNull(message = "Description is required")
     @Getter @Setter
     private String description;
-
-    @NotNull(message = "Project ID is required")
-    @Getter @Setter
-    private Long projectId;
 }

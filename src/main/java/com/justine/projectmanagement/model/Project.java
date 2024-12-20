@@ -14,7 +14,7 @@ import java.util.List;
 public class Project {
     @Id@GeneratedValue
     @Getter
-    private String id;
+    private Long id;
 
     @Getter @Setter
     private String name;
@@ -23,9 +23,10 @@ public class Project {
     private String description;
 
     @ManyToOne
+    @Setter @Getter
     private Company company;
 
-    @OneToMany(mappedBy = "project")
-    private List<Tickets> tickets;
+    @OneToMany(mappedBy = "project", fetch = FetchType.LAZY)
+    private List<Tickets> ticket;
 
 }

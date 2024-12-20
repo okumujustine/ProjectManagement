@@ -27,4 +27,7 @@ public class Tickets {
     @ManyToMany
     @Getter @Setter
     private List<Employee> assignees;
+
+    @OneToMany(mappedBy = "ticket")
+    private List<Comment> comments;
 }

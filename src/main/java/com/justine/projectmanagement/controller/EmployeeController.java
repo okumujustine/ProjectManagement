@@ -36,11 +36,6 @@ public class EmployeeController {
         return employeeService.register(employee);
     }
 
-//    @PostMapping("/login")
-//    public String login(@RequestBody Employee employee) {
-//        return employeeService.verify(employee);
-//    }
-
     @PostMapping("/login")
     public ResponseEntity<ApiResponseDto<String>> login(@RequestBody Employee employee) {
         String token = employeeService.verify(employee);
@@ -49,7 +44,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/add")
-    public Employee addEmployee(@RequestBody @Valid AddEmployeeDto emp) {
+    public ResponseEntity<ApiResponseDto<Employee>> addEmployee(@RequestBody @Valid AddEmployeeDto emp) {
 
         Employee employee = new Employee();
         employee.setEmail(emp.getEmail());
@@ -67,6 +62,9 @@ public class EmployeeController {
         }
 
         employee.setCompany(currentEmployee.getCompany());
-        return employeeService.add(employee);
+        Employee newlyAddedEmployee = employeeService.add(employee);
+
+        ApiResponseDto<Employee> response = new ApiResponseDto<>(newlyAddedEmployee, HttpStatus.OK.value());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

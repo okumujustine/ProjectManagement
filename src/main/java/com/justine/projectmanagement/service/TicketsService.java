@@ -1,6 +1,8 @@
 package com.justine.projectmanagement.service;
 
+import com.justine.projectmanagement.exceptions.EmployeeAlreadyAssignedException;
 import com.justine.projectmanagement.exceptions.ResourceNotFoundException;
+import com.justine.projectmanagement.model.Employee;
 import com.justine.projectmanagement.model.Tickets;
 import com.justine.projectmanagement.repository.TicketsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +14,12 @@ import java.util.List;
 public class TicketsService {
 
     private final TicketsRepository ticketsRepository;
+    private final EmployeeService employeeService;
 
     @Autowired
-    public TicketsService(TicketsRepository ticketsRepository) {
+    public TicketsService(TicketsRepository ticketsRepository, EmployeeService employeeService) {
         this.ticketsRepository = ticketsRepository;
+        this.employeeService = employeeService;
     }
 
 
@@ -26,7 +30,7 @@ public class TicketsService {
 
     public Tickets getTicketById(Long id) {
         return ticketsRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket with id " + id + " not found!"));
     }
 
 
@@ -49,5 +53,20 @@ public class TicketsService {
     public void deleteTicket(Long id) {
         Tickets ticket = getTicketById(id);
         ticketsRepository.delete(ticket);
+    }
+
+    public Tickets assignToTicket(Long ticketId, String employeeEmail) {
+        Tickets ticket = getTicketById(ticketId);
+        Employee employee = employeeService.getEmployeeByEmail(employeeEmail);
+
+        if (ticket.getAssignees().contains(employee)) {
+            throw new EmployeeAlreadyAssignedException(
+                    "Employee with email " + employeeEmail + " is already assigned to the ticket with ID " + ticketId + "."
+            );
+        }
+
+        ticket.getAssignees().add(employee);
+
+        return ticketsRepository.save(ticket);
     }
 }

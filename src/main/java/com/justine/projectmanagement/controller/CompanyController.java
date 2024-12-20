@@ -15,9 +15,6 @@ public class CompanyController {
 
     @PostMapping("/create")
     public Company create(@RequestBody Company company) {
-//        TODO: check if company with current user already exists
-//        if so, tell them company already exists with the company details
-//        if not create, and if user is not admin, they cannot access the creat company url
         return this.companyService.save(company);
     }
 }

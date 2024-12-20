@@ -1,9 +1,9 @@
 package com.justine.projectmanagement.repository;
 
-import com.justine.projectmanagement.model.Company;
+import com.justine.projectmanagement.model.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CompanyRepository extends JpaRepository<Company, Long> {
+public interface CommentRepository extends JpaRepository<Comment, Long> {
 }

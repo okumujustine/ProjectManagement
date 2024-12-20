@@ -1,6 +1,9 @@
 package com.justine.projectmanagement.service;
 
 import com.justine.projectmanagement.authentication.SecurityUtil;
+import com.justine.projectmanagement.exceptions.CompanyAlreadyCreatedException;
+import com.justine.projectmanagement.exceptions.CompanyAlreadyExistsException;
+import com.justine.projectmanagement.exceptions.CompanyDoesNotExists;
 import com.justine.projectmanagement.model.Company;
 import com.justine.projectmanagement.model.Employee;
 import com.justine.projectmanagement.repository.CompanyRepository;
@@ -23,10 +26,17 @@ public class CompanyService {
 
     @Transactional
     public Company save(Company company) {
-        Company savedCompany = companyRepository.save(company);
         Employee employee = this.employeeRepository.findByEmail(securityUtil.getCurrentUser().getUsername());
+        if(employee.getCompany() != null) {
+            throw new CompanyAlreadyCreatedException("You already created a company " + employee.getCompany().getName());
+        }
+        Company savedCompany = companyRepository.save(company);
         employee.setCompany(savedCompany);
         this.employeeRepository.save(employee);
         return savedCompany;
+    }
+
+    public Company findById(Long id) {
+        return companyRepository.findById(id).orElseThrow(() -> new CompanyDoesNotExists("Company with id " + id + "does not exists"));
     }
 }

@@ -1,12 +1,15 @@
 package com.justine.projectmanagement.controller;
 
+import com.justine.projectmanagement.dto.ApiResponseDto;
+import com.justine.projectmanagement.dto.CreateProjectDto;
+import com.justine.projectmanagement.dto.CreateTicketDto;
 import com.justine.projectmanagement.model.Project;
 import com.justine.projectmanagement.service.ProjectService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/projects")
@@ -18,7 +21,14 @@ public class ProjectController {
     }
 
     @PostMapping
-    public String createProject(@RequestBody Project project) {
-        return "project created";
+    public ResponseEntity<ApiResponseDto<Project>> createProject(@RequestBody @Valid CreateProjectDto project) {
+        Project newProject = this.projectService.createNewProject(project);
+        return new ResponseEntity<>(new ApiResponseDto<>(newProject, HttpStatus.CREATED.value()), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/{projectId}/ticket")
+    public ResponseEntity<ApiResponseDto<Project>> createProjectTicket(@RequestBody @Valid CreateTicketDto ticketDto, @PathVariable Long projectId) {
+        Project newProject = this.projectService.createProjectTicket(ticketDto, projectId);
+        return new ResponseEntity<>(new ApiResponseDto<>(newProject, HttpStatus.CREATED.value()), HttpStatus.CREATED);
     }
 }

@@ -1,6 +1,6 @@
 package com.justine.projectmanagement.controller;
 
-import com.justine.projectmanagement.dto.CreateTicketDTO;
+import com.justine.projectmanagement.dto.CreateTicketDto;
 import com.justine.projectmanagement.model.Project;
 import com.justine.projectmanagement.model.Tickets;
 import com.justine.projectmanagement.service.ProjectService;
@@ -30,14 +30,10 @@ public class TicketsController {
 
 
     @PostMapping
-    public ResponseEntity<Tickets> createTicket(@Valid @RequestBody CreateTicketDTO ticket) {
+    public ResponseEntity<Tickets> createTicket(@Valid @RequestBody CreateTicketDto ticket) {
         Tickets tick = new Tickets();
         tick.setTitle(ticket.getTitle());
         tick.setDescription(ticket.getDescription());
-
-        Project proj = this.projectService.getProjectById(ticket.getProjectId());
-        tick.setProject(proj);
-
 
         Tickets createdTicket = ticketsService.createTicket(tick);
         return new ResponseEntity<>(createdTicket, HttpStatus.CREATED);
@@ -69,5 +65,11 @@ public class TicketsController {
     public ResponseEntity<Void> deleteTicket(@PathVariable Long id) {
         ticketsService.deleteTicket(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping ("/{ticketId}/assign/{employeeEmail}")
+    public ResponseEntity<Tickets> updateTicket(@PathVariable Long ticketId, @PathVariable String employeeEmail) {
+        Tickets updatedTicket = ticketsService.assignToTicket(ticketId, employeeEmail);
+        return ResponseEntity.ok(updatedTicket);
     }
 }
