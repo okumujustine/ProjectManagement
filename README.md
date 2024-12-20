@@ -24,20 +24,28 @@ A high-level overview of what the company is working on, it's a full project at 
 
 A company can have multiple projects, mostly a software company or a multi-project company like Meta.
 
-## Features
-
-A high-level overview of what needs to be worked on under a specific project. For example authentication, messaging, etc.
-
 ## Boards
 
 Represents a breakdown of what has to be worked on under a specific feature, for example, if a login.
+Grouping of features at different stages (being worked on, pull request, deployed)
 
-## Customers
+## Features/Tickets
 
-Customers subscribe to a board and they are notified every time the board moves from one stage to another, in this case, from issue, working, released. 
+A high-level overview of what needs to be worked on under a specific project. For example authentication, messaging, etc.
 
-The Customer entity is a child entity to the Accounts entity in the inheritance structure.
+## Comments
+Comment on features
 
-## Emails
+
+## Notifications
 
 Stores the email sent to the customers.
+
+
+Features with the most activity (total number of comments).
+
+Get the total number of tickets closed per quarter (per 3 months)
+Story points
+
+JMS
+Send notifications for ticket activity moved ticket.
