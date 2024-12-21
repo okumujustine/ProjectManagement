@@ -11,6 +11,13 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedQueries({
+        @NamedQuery(
+                name = "Project.findByCompanyName",
+                query = "SELECT p FROM Project p WHERE p.company.name = :companyName",
+                lockMode = LockModeType.PESSIMISTIC_WRITE
+        )
+})
 public class Project {
     @Id@GeneratedValue
     @Getter
@@ -21,6 +28,9 @@ public class Project {
 
     @Getter @Setter
     private String description;
+
+    @Version
+    private Long version;
 
     @ManyToOne
     @Setter @Getter

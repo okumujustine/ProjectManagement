@@ -2,9 +2,14 @@ package com.justine.projectmanagement.service;
 
 import com.justine.projectmanagement.exceptions.EmployeeAlreadyAssignedException;
 import com.justine.projectmanagement.exceptions.ResourceNotFoundException;
+import com.justine.projectmanagement.model.Comment;
 import com.justine.projectmanagement.model.Employee;
 import com.justine.projectmanagement.model.Tickets;
+import com.justine.projectmanagement.repository.CommentRepository;
 import com.justine.projectmanagement.repository.TicketsRepository;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,11 +20,13 @@ public class TicketsService {
 
     private final TicketsRepository ticketsRepository;
     private final EmployeeService employeeService;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public TicketsService(TicketsRepository ticketsRepository, EmployeeService employeeService) {
+    public TicketsService(TicketsRepository ticketsRepository, EmployeeService employeeService, CommentRepository commentRepository) {
         this.ticketsRepository = ticketsRepository;
         this.employeeService = employeeService;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -68,5 +75,20 @@ public class TicketsService {
         ticket.getAssignees().add(employee);
 
         return ticketsRepository.save(ticket);
+    }
+
+    @Transactional
+    public Comment addToTicket(Long ticketId, String text) {
+        Tickets ticket = getTicketById(ticketId);
+        Comment comment = new Comment();
+        comment.setText(text);
+        comment.setTicket(ticket);
+        ticketsRepository.save(ticket);
+
+        return this.commentRepository.save(comment);
+    }
+
+    public List<Object[]> getTicketStatsPerProjectAndRole() {
+        return ticketsRepository.findTicketStatsPerProjectAndRole();
     }
 }

@@ -16,6 +16,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProjectService {
     private final ProjectRepository projectRepository;
@@ -57,5 +59,9 @@ public class ProjectService {
         this.ticketsRepository.save(newTicket);
 
         return this.getProjectById(projectId);
+    }
+
+    public List<Project> getProjectsByCompanyName(String companyName) {
+        return projectRepository.findByCompanyName(companyName);
     }
 }

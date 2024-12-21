@@ -18,6 +18,9 @@ public abstract class Account {
     @Getter @Setter
     private String password;
 
+    @Version
+    private Long version;
+
     @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="company_id")
     @Getter @Setter

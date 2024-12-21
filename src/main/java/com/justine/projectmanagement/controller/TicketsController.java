@@ -1,6 +1,9 @@
 package com.justine.projectmanagement.controller;
 
+import com.justine.projectmanagement.dto.CommentDto;
 import com.justine.projectmanagement.dto.CreateTicketDto;
+import com.justine.projectmanagement.jms.TicketNotificationProducer;
+import com.justine.projectmanagement.model.Comment;
 import com.justine.projectmanagement.model.Project;
 import com.justine.projectmanagement.model.Tickets;
 import com.justine.projectmanagement.service.ProjectService;
@@ -8,6 +11,7 @@ import com.justine.projectmanagement.service.TicketsService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +19,17 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/tickets")
+@RequestMapping(path = "/api/v1/tickets", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
 @Validated
 public class TicketsController {
 
     private final TicketsService ticketsService;
-    private final ProjectService projectService;
+    private final TicketNotificationProducer ticketNotificationProducer;
 
     @Autowired
-    public TicketsController(TicketsService ticketsService, ProjectService projectService) {
+    public TicketsController(TicketsService ticketsService, TicketNotificationProducer ticketNotificationProducer) {
         this.ticketsService = ticketsService;
-        this.projectService = projectService;
+        this.ticketNotificationProducer = ticketNotificationProducer;
     }
 
 
@@ -71,5 +75,17 @@ public class TicketsController {
     public ResponseEntity<Tickets> updateTicket(@PathVariable Long ticketId, @PathVariable String employeeEmail) {
         Tickets updatedTicket = ticketsService.assignToTicket(ticketId, employeeEmail);
         return ResponseEntity.ok(updatedTicket);
+    }
+
+    @PostMapping ("/{ticketId}/comment")
+    public ResponseEntity<Comment> updateTicket(@RequestBody @Valid CommentDto commentDto, @PathVariable Long ticketId) {
+        Comment updatedTicket = ticketsService.addToTicket(ticketId, commentDto.getText());
+        ticketNotificationProducer.sendNotification(updatedTicket);
+        return ResponseEntity.ok(updatedTicket);
+    }
+
+    @GetMapping("/stats")
+    public List<Object[]> getTicketStatistics() {
+        return ticketsService.getTicketStatsPerProjectAndRole();
     }
 }

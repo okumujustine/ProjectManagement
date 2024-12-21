@@ -24,6 +24,9 @@ public class Tickets {
     @Getter @Setter
     private Project project;
 
+    @Version
+    private Long version;
+
     @ManyToMany
     @Getter @Setter
     private List<Employee> assignees;

@@ -19,6 +19,9 @@ public class Company {
     @Getter @Setter
     private String description;
 
+    @Version
+    private Long version;
+
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();
 

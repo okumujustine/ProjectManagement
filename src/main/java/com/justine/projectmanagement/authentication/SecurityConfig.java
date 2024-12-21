@@ -1,5 +1,6 @@
 package com.justine.projectmanagement.authentication;
 
+import com.justine.projectmanagement.enums.EmployeeRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +34,12 @@ public class SecurityConfig {
         return http.csrf(customizer -> customizer.disable()).
                 authorizeHttpRequests(request -> request
                         .requestMatchers( "/api/v1/employees/register", "/api/v1/employees/login").permitAll()
+                        .requestMatchers(
+                                "/api/v1/companies/create",
+                                "/api/v1/employees/add",
+                                "/api/v1/employees/{employeeId}/update",
+                                "/api/v1/employees/{employeeId}/delete"
+                        ).hasAnyAuthority(EmployeeRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

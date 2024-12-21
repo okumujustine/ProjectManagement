@@ -17,6 +17,8 @@ public class Employee extends Account {
     @Getter @Setter
     private EmployeeRole role;
 
+    // version field already exists in Account where Employee inherits from
+
     @ManyToMany
     private List<Tickets> tickets;
 
